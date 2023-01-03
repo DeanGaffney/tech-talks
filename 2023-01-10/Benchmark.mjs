@@ -28,7 +28,7 @@ export default class Benchmark {
           return { json: await res.json(), id };
         } catch (error) {
           if (error.message.includes('network timeout')) {
-            return { json: { strategy: 'max-retries-exceeded' }, id }
+            return { json: { strategy: ServerStrategies.TIMEOUT }, id }
           }
           return { json: { strategy: ServerStrategies.KILL_CONNECTION }, id }
         }
@@ -45,7 +45,7 @@ export default class Benchmark {
     });
 
     const specificTable = new CliTable({
-      head: ['% Handled', '% Killed', '% Timed Out', '% Max Retries Exceeded']
+      head: ['% Handled', '% Killed', '% Timed Out']
     });
 
     const failedRequestsTable = new CliTable({
@@ -59,8 +59,6 @@ export default class Benchmark {
     const killedResults = this.fetchResults.filter(res => res.json.strategy === ServerStrategies.KILL_CONNECTION);
     const timeoutResults = this.fetchResults.filter(res => res.json.strategy === ServerStrategies.TIMEOUT);
 
-    const maxRetryFailures = this.fetchResults.filter(res => res.json.strategy === 'max-retries-exceeded');
-
     const percentageOfSuccessfulRequestsOverall = Math.floor(
       (successfulRequests.length / this.numOfRequests) * 100 / 1);
 
@@ -72,10 +70,6 @@ export default class Benchmark {
 
     const percentageOfTimedoutRequests = Math.floor(
       (timeoutResults.length / this.numOfRequests) * 100 / 1);
-
-    const percentageOfMaxRetriesExceeded = Math.floor(
-      (maxRetryFailures.length / this.numOfRequests) * 100 / 1);
-
 
     overallTable.push([
       this.numOfRequests,
@@ -89,7 +83,6 @@ export default class Benchmark {
       percentageOfSuccessfulRequestsOverall,
       percentageOfKilledRequests,
       percentageOfTimedoutRequests,
-      percentageOfMaxRetriesExceeded
     ]);
 
     this.logger.info(overallTable.toString());
@@ -104,7 +97,7 @@ export default class Benchmark {
           failedReq['strategyHistory'].filter(strat => strat === ServerStrategies.TIMEOUT).length
         ])
       });
-      this.logger.info(failedRequestsTable.toString());
+      this.logger.debug(failedRequestsTable.toString());
     }
 
   }

@@ -17,7 +17,6 @@ export default class FetchBuilder {
     this.maxRetries = DEFAULTS.MAX_RETRIES;
     this.keepAlive = false;
     this.logger = logger;
-
   }
 
   withTimeout(timeoutMilliseconds) {
