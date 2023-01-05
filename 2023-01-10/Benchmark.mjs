@@ -41,11 +41,11 @@ export default class Benchmark {
 
   outputResults() {
     const overallTable = new CliTable({
-      head: ['Total Requests', 'Total Requests w/ retries', 'Total Server Connections', '% Succeeded Overall', '% Failed Overall'],
+      head: ['Total Requests Initiated', 'Total Requests w/retries', 'Total Server Connections', '% Succeeded Overall', '% Failed Overall'],
     });
 
     const specificTable = new CliTable({
-      head: ['% Handled', '% Killed', '% Timed Out']
+      head: ['% Success', '% Killed', '% Timed Out']
     });
 
     const failedRequestsTable = new CliTable({
